@@ -86,7 +86,10 @@ public class FBXParser : MonoBehaviour {
 
 	void Start()
 	{
-		
+//		string ss = "23.2342342344E-002";
+//		double d = double.Parse (ss);
+//		Debug.Log (d);
+//		return;
 		//objectProp = new ObjectProp ();
 		if (fbxPath != null) {
 			meshList = new List<ObjectProp> ();
@@ -624,7 +627,7 @@ public class FBXParser : MonoBehaviour {
 		x = y = z = 0;
 		bool readX = true, readY=false, readZ=false;
 		foreach (char c in line) {
-			if (Char.IsDigit (c) || c=='.' || c=='e' || c=='E')
+			if (Char.IsDigit (c) || c=='.' || c=='e' || c=='E' || c=='-')
 				snum += c.ToString ();
 			//Debug.Log (c);
 			if (c == ',') {
@@ -774,7 +777,7 @@ public class FBXParser : MonoBehaviour {
 		x = y = z = 0;
 		bool readX = true, readY=false, readZ=false;
 		foreach (char c in line) {
-			if (Char.IsDigit (c) || c=='.' || c=='e' || c=='E')
+			if (Char.IsDigit (c) || c=='.' || c=='e' || c=='E' || c=='-')
 				snum += c.ToString ();
 			//Debug.Log (c);
 			if (c == ',') {
