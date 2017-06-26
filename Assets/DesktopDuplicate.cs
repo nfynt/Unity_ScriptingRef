@@ -1,172 +1,87 @@
-using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Threading;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Drawing;
 
-namespace ScreenshotCapturer
-{
-	class Program
+public class ScreenCaptureBuffer : MonoBehaviour {
+
+	public static ScreenCaptureBuffer Instance;
+
+	public GameObject screenObj;
+	public bool EnableCapture;
+
+	private List<Texture2D> frameBuff = new List<Texture2D> ();
+	private bool capturingScreen;
+	private int bufferCounter;
+	[HideInInspector]
+	public Texture2D defaultTex;
+
+	void Start()
 	{
-		static void Main(string[] args)
-		{
-			// Usage:
-			// ScreenshotCapturer.exe [-prefix <filePathStemToSaveTo>] [-extension <imageFileExtension>]
-			// [-bounds <captureBoundsX> <captureBoundsY> <captureBoundsWidth> <captureBoundsHeight>]
-			// [-count <numberOfScreenshotsToCapture>] [-frequency <screenshotsPerSecond>]
+		if (Instance == null)
+			Instance = this;
+		else
+			Destroy (this.gameObject);
 
-			DateTime now = DateTime.Now;
-			Console.WriteLine("Program begins: " + now);
-
-			const string dateTimeFormat = "yyyyMMdd-HHmmss-fff";
-
-			string filePathStemToSaveTo = "Screenshot-" + now.ToString(dateTimeFormat);
-			string imageFileExtension = ".png";
-			Rectangle? captureBoundsNullable = null;
-			int numberOfScreenshotsToCapture = 1;
-			int millisecondsPerScreenshot = 0;
-
-			try
-			{
-				for (var i = 0; i < args.Length; i++)
-				{
-					var argument = args[i];
-					if (argument == "-prefix")
-					{
-						filePathStemToSaveTo = args[i + 1];
-						i++;		
-					}
-					else if (argument == "-extension")
-					{
-						imageFileExtension = args[i + 1];
-						i++;
-					}
-					else if (argument == "-bounds")
-					{
-						captureBoundsNullable = new Rectangle
-						(
-							Int32.Parse(args[i + 1]), Int32.Parse(args[i + 2]),
-							Int32.Parse(args[i + 3]), Int32.Parse(args[i + 4])
-						);
-						i += 4;
-					}
-					else if (argument == "-count")
-					{
-						numberOfScreenshotsToCapture = Int32.Parse(args[i + 1]);
-						i++;
-					}
-					else if (argument == "-frequency")
-					{
-						int screenshotsPerSecond = Int32.Parse(args[i + 1]);
-						millisecondsPerScreenshot = 1000 / screenshotsPerSecond;
-						i++;
-					}
-					else
-					{						
-						throw new Exception( "Unrecognized command-line switch:" + argument);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				string errorMessage = "Error parsing command-line arguments: " + ex.Message;
-				Console.WriteLine(errorMessage);
-			}
-				
-			ScreenshotCapturer screenshotCapturer = new ScreenshotCapturer()
-			{
-					FilePathStemToSaveTo = filePathStemToSaveTo,
-					ImageFileExtension = imageFileExtension,
-					CaptureBoundsNullable = captureBoundsNullable,
-					NumberOfScreenshotsToCapture = numberOfScreenshotsToCapture,
-					MillisecondsPerScreenshot = millisecondsPerScreenshot,
-			};
-			
-			screenshotCapturer.start();
-
-			Console.WriteLine("Program ends: " + DateTime.Now);
-		}
+		capturingScreen = EnableCapture = false;
+		bufferCounter = 0;
+		defaultTex = new Texture2D (UnityEngine.Screen.width, UnityEngine.Screen.height, TextureFormat.RGB24, false);
+		frameBuff.Add (defaultTex);
+		frameBuff.Add (defaultTex);
+		frameBuff.Add (defaultTex);
+		frameBuff.Add (defaultTex);
 	}
 
-	public class ScreenshotCapturer
+	void Update()
 	{
-		public string FilePathStemToSaveTo;
-		public string ImageFileExtension;
-		public Rectangle? CaptureBoundsNullable;
-		public int NumberOfScreenshotsToCapture;
-		public int MillisecondsPerScreenshot;
-	
-		public void start()
-		{
-			Console.WriteLine("-prefix=" + this.FilePathStemToSaveTo);
-			Console.WriteLine("-extension=" + this.ImageFileExtension);
-			Console.WriteLine("-bounds=" + this.CaptureBoundsNullable);
-			Console.WriteLine("-count=" + this.NumberOfScreenshotsToCapture);
-			Console.WriteLine("-frequency=" + (1000 / this.MillisecondsPerScreenshot));
+		if (!capturingScreen && EnableCapture)
+			StartCoroutine (CaptureScreen ());
+	}
 
-			if (this.NumberOfScreenshotsToCapture == 1)
-			{
-				this.copyScreenToImageFile(0);
-			}
-			else
-			{
-				for (var i = 0; i < this.NumberOfScreenshotsToCapture; i++)
-				{
-					this.copyScreenToImageFile(i);
-					Thread.Sleep(this.MillisecondsPerScreenshot);
-				}
-			}	
+	IEnumerator CaptureScreen()
+	{
+		capturingScreen = true;
+		yield return new WaitForEndOfFrame ();
+//		UnityEngine.Application.CaptureScreenshot (UnityEngine.Application.dataPath + "/cap.png");
+//		yield return 1;
+//		byte[] imgbyte = File.ReadAllBytes(UnityEngine.Application.dataPath + "/cap.png");
+//		defaultTex.LoadImage (imgbyte);
+//		//defaultTex.ReadPixels (new Rect (0, 0, Screen.width, Screen.height), 0, 0);
+//		yield return 0;
+		defaultTex = GetScreenTexture();
+		yield return 1;
+		screenObj.GetComponent<MeshRenderer>().material.mainTexture = defaultTex;
+		//yield return new WaitForSeconds (0.8f);
+		Debug.Log ("Captured a shot");
+		capturingScreen = false;
+	}
+
+	/// <summary>
+	/// Gets the screen texture from windows graphics.
+	/// </summary>
+	/// <returns>The screen texture.</returns>
+	Texture2D GetScreenTexture()
+	{
+		Texture2D tex = new Texture2D (200, 300, TextureFormat.RGB24, false);
+		Rectangle screenSize = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+		Bitmap target = new Bitmap (screenSize.Width, screenSize.Height);
+		using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(target)) {
+			g.CopyFromScreen (0, 0, 0, 0, new Size (screenSize.Width, screenSize.Height));
 		}
+		MemoryStream ms = new MemoryStream ();
+		target.Save (ms, System.Drawing.Imaging.ImageFormat.Png);
+		ms.Seek (0, SeekOrigin.Begin);
 
-		public void copyScreenToImageFile(int? imageIndex)
-		{
-			// Adapted from code found at the URL
-			// https://stackoverflow.com/questions/5049122/capture-the-screen-shot-using-net
+		tex.LoadImage (ms.ToArray ());
 
-			Rectangle captureBounds;
+		return tex;
+	}
 
-			if (this.CaptureBoundsNullable == null)
-			{
-				captureBounds = Screen.PrimaryScreen.Bounds;
-			}
-			else
-			{
-				captureBounds = this.CaptureBoundsNullable.Value;
-			}	
-
-			Bitmap bitmapCaptured = new Bitmap
-			(
-				captureBounds.Width, 
-				captureBounds.Height
-			);
-			
-			Graphics graphics = Graphics.FromImage(bitmapCaptured);
-			
-			graphics.CopyFromScreen
-			(
-				captureBounds.X, captureBounds.Y, // source
-				0, 0, // destination
-				bitmapCaptured.Size 
-				// CopyPixelOperation.SourceCopy
-			);
-
-			string filePathToSaveTo = 
-				this.FilePathStemToSaveTo 
-				+ (imageIndex == null ? "" : imageIndex.Value.ToString())
-				+ this.ImageFileExtension;
-
-			Console.WriteLine("Saving " + filePathToSaveTo + "...");
-
-			try
-			{
-				bitmapCaptured.Save(filePathToSaveTo);
-			}
-			catch (Exception)
-			{
-				string errorMessage = 
-					"Error attemping to save file.  Ensure directory exists, and permissions are adequate.";
-				Console.WriteLine(errorMessage);
-			}
-		}
+	public void ResetScreen()
+	{
+		screenObj.GetComponent<MeshRenderer>().material.mainTexture = defaultTex;
 	}
 }
