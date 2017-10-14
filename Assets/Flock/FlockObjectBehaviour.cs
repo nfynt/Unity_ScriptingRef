@@ -2,74 +2,89 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlockManager : MonoBehaviour {
+public class FlockObjectBehaviour : MonoBehaviour {
 
-	public GameObject flockPrefab;	//the prefab of object to be used in flock
-	public int objCount = 10;
-	public int volumeRadius = 5;
-	public float neighbourRadius = 10f;
-	public float objSpeed = 2f;
-	public float objRotSpeed = 4f;
-	public bool userRadius=true;
-	public float radius=5f;
-	private float height;
-	public int pointDensity=5;
+	float speed = 0.5f;
+	float rotationSpeed =  4.0f;
 
-	public static List<GameObject> objs;	//the objects that have been spawned
-	public List<Vector3> pathPoints = new List<Vector3>();
-	[HideInInspector]
-	public Vector3 goalPos=Vector3.zero;
-	int currTarget=0;
+	Vector3 averageHeading;
+	Vector3 averagePosition;
+	float neighbourDist = 2f;
+	FlockManager manager;
 
 	void Start()
 	{
-		objs = new List<GameObject> ();
-		height = transform.position.y;
-
-		if (userRadius) {
-			pathPoints.Clear ();
-			pointDensity *= 4;
-			float theta = 0;
-			float delta = 360 / pointDensity;
-			for (int i = 0; i < pointDensity; i++) {
-				pathPoints.Add (new Vector3 (transform.position.x + radius * Mathf.Cos (theta * Mathf.Deg2Rad), height, transform.position.z + radius * Mathf.Sin (theta * Mathf.Deg2Rad)));
-				theta += delta;
-			}
-
-		}
-
-		NextTarget ();
-
-		for (int i = 0; i < objCount; i++) {
-			Vector3 pos = transform.position + new Vector3 (Random.Range (-volumeRadius, volumeRadius), Random.Range (-volumeRadius, volumeRadius),
-				Random.Range (-volumeRadius, volumeRadius));
-			GameObject go = Instantiate (flockPrefab, pos, Quaternion.identity);
-			objs.Add (go);
-			go.GetComponent<FlockObjectBehaviour> ().SetManager (this);
+		speed = Random.Range (speed, 3 * speed);
+		if (GetComponent<Animator> () != null) {
+			GetComponent<Animator> ().enabled = false;
+			//GetComponent<Animator> ().SetBool ("wait", true);
+			Invoke ("StartAnim", Random.Range (0.1f, 1f));
 		}
 	}
 
-	public void NextTarget()
+	void StartAnim()
 	{
-		if (currTarget > pathPoints.Count - 1) {
-			currTarget = 0;
-		}
-		
-		goalPos = pathPoints [currTarget];
-		currTarget++;
+		GetComponent<Animator> ().enabled=true;
 	}
 
-
-	void OnDrawGizmosSelected(){
-		Vector3 currPos=transform.position;
-		Gizmos.color = Color.red;
-		foreach (Vector3 v in pathPoints) {
-			Gizmos.DrawLine (currPos,v);
-			currPos = v;
-		}
-
-		Gizmos.color = Color.green;
-		Gizmos.DrawSphere (transform.position, volumeRadius);
+	public void SetManager(FlockManager mgr)
+	{
+		manager = mgr;
+		neighbourDist = mgr.neighbourRadius;
+		speed = mgr.objSpeed;
+		rotationSpeed = mgr.objRotSpeed;
 	}
 
+	void Update()
+	{
+		if(Random.Range(0,5) < 1)
+			Check();
+		transform.Translate(new Vector3(0,0,Time.deltaTime * speed));
+	}
+
+	void Check ()
+	{
+		GameObject[] gos = FlockManager.objs.ToArray ();
+
+		Vector3 vCenter = Vector3.zero;
+		Vector3 vAvoid = Vector3.zero;
+		float gSpeed = 0.1f;
+
+		Vector3 goalPos = manager.goalPos;
+
+		float dist;
+
+		int groupSize = 0;
+
+		foreach (GameObject g in gos) {
+			if (g != this.gameObject) {
+				dist = Vector3.Distance (g.transform.position, this.transform.position);
+				if (dist <= neighbourDist) {
+					vCenter += g.transform.position;
+					groupSize++;
+
+					if (dist < 1f) {
+						vAvoid += this.transform.position - g.transform.position;
+					}
+
+					gSpeed += g.GetComponent<FlockObjectBehaviour> ().speed;
+
+				}
+			}
+		}
+
+		if (groupSize > 0) {
+			vCenter = vCenter / groupSize + (goalPos - this.transform.position);
+			speed = gSpeed / groupSize;
+
+			Vector3 dir = (vCenter + vAvoid) - transform.position;
+			if (dir != Vector3.zero)
+				transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (dir), rotationSpeed * Time.deltaTime);
+		}
+
+		if ((goalPos - this.transform.position).sqrMagnitude < 2f)
+			manager.NextTarget ();
+
+		SetManager (manager);
+	}
 }
