@@ -9,9 +9,11 @@ Shubham Singh
 
 ### Index
 * [1](https://github.com/nfynt/Unity_ScriptingRef/blob/master/EditorUtility.cs) - Updating input manager from editor script
-* [2](https://github.com/nfynt/Unity_ScriptingRef/blob/master/AnchorToolsEditor.cs) - Setting UI anchors from script in editor
+* [2](https://github.com/nfynt/Unity_ScriptingRef/blob/master/Random/AnchorToolsEditor.cs) - Setting UI anchors from script in editor
 * [3](https://github.com/nfynt/Unity_ScriptingRef/blob/master/WaveMixer.cs) - Mixing two wav audios
 * [4](https://github.com/nfynt/Unity_ScriptingRef/blob/master/ImageEditing/) - Image editing in unity editor
+* [5](https://github.com/nfynt/Unity_ScriptingRef/blob/master/PdfReader/) - Rendering pdf file in unity scene
+* [6](https://github.com/nfynt/Unity_ScriptingRef/blob/master/Random/CubesFromTexture.cs) - Generate voxel mesh from 2D texture
 
 
 ```
