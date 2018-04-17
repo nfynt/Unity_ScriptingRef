@@ -7,4 +7,4 @@ SimpleTexture: apply texture to mat with option to apply tint
 TweenTexture: tween between two textures with proper tilling
 
 
-![TRAFFIC DATA](https://github.com/nfynt/Unity_ScriptingRef/blob/master/ImageEditing/snap.PNG?raw=true)
+![TRAFFIC DATA](https://github.com/nfynt/Unity_ScriptingRef/blob/master/Shaders/snap.PNG?raw=true)
