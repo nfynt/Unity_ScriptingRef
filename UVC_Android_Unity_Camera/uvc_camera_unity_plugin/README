@@ -4,3 +4,6 @@ Compile instructions :
 2. sync gradle
 3. double click on gradle task :app/Tasks/other/exportJar
 4. double click on gradle task :app/Tasks/other/exportJarToUnity
+
+
+[Note]: Edit the path under tasks to place the package in right directory on your machine
