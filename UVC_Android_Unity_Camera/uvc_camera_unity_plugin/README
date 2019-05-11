@@ -1,0 +1,6 @@
+Compile instructions :
+
+1. open project with android studio
+2. sync gradle
+3. double click on gradle task :app/Tasks/other/exportJar
+4. double click on gradle task :app/Tasks/other/exportJarToUnity
