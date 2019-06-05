@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class UIAnchors {
 
-	[MenuItem("SUI/Set Anchors To Corner")]
+	[MenuItem("SUI/Set Anchors To Corner %U")]
 	static void AnchorsToCorner()
 	{
 		foreach (Transform transform in Selection.transforms) {
