@@ -165,7 +165,7 @@ print("X "+str(x)+"\tY "+str(y))
 
 #### Empty Tuple
 cart = ("ford","merc","lexus")
-*cars, = cart #starred assignment of tuple into list same 
+*cars, = cart #starred assignment of tuple into list; same as cars = list(cart)
 cars+= ['bmw']
 print(cars)
 
