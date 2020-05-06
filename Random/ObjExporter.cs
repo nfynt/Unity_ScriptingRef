@@ -69,6 +69,71 @@ public class ObjExporterScript
 		StartIndex += numVertices;
 		return sb.ToString();
 	}
+
+	public static string CustMeshToString(MeshFilter mf, Transform t)
+	{
+		Quaternion r = t.localRotation;
+
+
+		int numVertices = 0;
+		Mesh m = mf.sharedMesh;
+		if (!m)
+		{
+			return "####Error####";
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		//Vertex positions
+		sb.Append("Vert position\n[\n");
+		foreach (Vector3 vv in m.vertices)
+		{
+			Vector3 v = t.TransformPoint(vv);
+			numVertices++;
+			sb.Append(string.Format("[{0},{1},{2}], ", v.x, v.y, -v.z));
+		}
+		sb.Append("\n]");
+
+		//Face (Tri) normals
+		sb.Append("\n\n\nTri_normal\n[\n");
+
+		//foreach (Vector3 nn in m.normals)
+		//{
+		//	Vector3 v = r * nn;
+		//	sb.Append(string.Format("[{0},{1},{2}], ", -v.x, -v.y, v.z));
+		//}
+		int[] tris = m.GetTriangles(0);
+		for (int i = 0; i < tris.Length; i+=3)
+		{
+			//Vector3 v = t.TransformPoint(m.vertices[tris[i]] - t.position).normalized;
+			Vector3 v = Vector3.Cross(m.vertices[tris[i]] - m.vertices[tris[i + 1]], m.vertices[tris[i + 2]] - m.vertices[tris[i + 1]]).normalized;
+			sb.Append(string.Format("[{0},{1},{2}], ", -v.x, -v.y, v.z));
+		}
+		sb.Append("\n]\n\n");
+
+		//foreach (Vector3 v in m.uv)
+		//{
+		//	sb.Append(string.Format("vt {0} {1}\n", v.x, v.y));
+		//}
+
+		//Polygon
+		for (int material = 0; material < m.subMeshCount; material++)
+		{
+			sb.Append("\nPolygon\n[\n");
+			//sb.Append("usemtl ").Append(mats[material].name).Append("\n");
+			//sb.Append("usemap ").Append(mats[material].name).Append("\n");
+
+			int[] triangles = m.GetTriangles(material);
+			for (int i = 0; i < triangles.Length; i += 3)
+			{
+				sb.Append(string.Format("[{0},{1},{2}], ",
+					triangles[i] + StartIndex, triangles[i + 1] + StartIndex, triangles[i + 2] + StartIndex));
+			}
+		}
+		sb.Append("\n]\n");
+		StartIndex += numVertices;
+		return sb.ToString();
+	}
 }
 
 public class ObjExporter : ScriptableObject
@@ -85,6 +150,57 @@ public class ObjExporter : ScriptableObject
 		DoExport(false);
 	}
 
+	[MenuItem("Nfynt/Export/Custom_tri_vpos_norm_obj")]
+	static void CustomWOExport()
+	{
+		CExport();
+	}
+
+	static void CExport()
+	{
+		if (Selection.gameObjects.Length == 0)
+		{
+			Debug.Log("Didn't Export Any Meshes; Nothing was selected!");
+			return;
+		}
+
+		string meshName = Selection.gameObjects[0].name;
+		string fileName = EditorUtility.SaveFilePanel("Export .obj file", "", meshName, "obj");
+
+		ObjExporterScript.Start();
+
+		StringBuilder meshString = new StringBuilder();
+
+		meshString.Append("#" + meshName + ".obj"
+							+ "\n#" + System.DateTime.Now.ToLongDateString()
+							+ "\n#" + System.DateTime.Now.ToLongTimeString()
+							+ "\n#-------"
+							+ "\n\n");
+
+		Transform t = Selection.gameObjects[0].transform;
+
+		Vector3 originalPosition = t.position;
+		t.position = Vector3.zero;
+
+		meshString.Append("g ").Append(t.name).Append("\n");
+
+		StringBuilder mesh_str = new StringBuilder();
+		
+		MeshFilter mf = t.GetComponent<MeshFilter>();
+		if (mf)
+		{
+			mesh_str.Append(ObjExporterScript.CustMeshToString(mf, t));
+		}
+		
+		meshString.Append(mesh_str);
+
+		WriteToFile(meshString.ToString(), fileName);
+
+		t.position = originalPosition;
+
+		ObjExporterScript.End();
+		Debug.Log("Exported custom Mesh: " + fileName);
+	}
 
 	static void DoExport(bool makeSubmeshes)
 	{
