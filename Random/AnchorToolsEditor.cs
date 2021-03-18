@@ -6,6 +6,8 @@ public class UIAnchors {
 	[MenuItem("SUI/Set Anchors To Corner %U")]
 	static void AnchorsToCorner()
 	{
+		EditorGUI.BeginChangeCheck();
+		Undo.RecordObjects(Selection.transforms,"Changed UI anchors");
 		foreach (Transform transform in Selection.transforms) {
 			RectTransform t = transform as RectTransform;
 			RectTransform pt = Selection.activeTransform.parent as RectTransform;
