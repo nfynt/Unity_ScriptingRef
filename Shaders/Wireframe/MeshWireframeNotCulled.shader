@@ -1,4 +1,4 @@
-﻿Shader "Nfynt/MeshWireframeNotCulled"
+﻿Shader "DTT/MeshWireframeNotCulled"
 {
 	Properties
 	{
@@ -8,7 +8,7 @@
 	
 	SubShader
 	{
-		Tags { "RenderType"="Transparent" "Queue"="Transparent" }
+		Tags { "RenderType"="Transparent" "Queue"="Transparent+100" }
 		LOD 100
 
 		Pass
