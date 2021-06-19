@@ -12,10 +12,10 @@ public class MediaInfo : MonoBehaviour {
     void Start()
     {
         x = 0;
-        var inputFile = new MediaFile { Filename = @"C:\Users\shubh\Videos\VidTest\mitti.mp4" };
-        var outputFile = new MediaFile { Filename = @"C:\Users\shubh\Videos\VidTest\mitti.jpg" };
+        var inputFile = new MediaFile { Filename = @"Videos\VidTest\mitti.mp4" };
+        var outputFile = new MediaFile { Filename = @"Videos\VidTest\mitti.jpg" };
 
-        using (var engine = new Engine(@"C:\Users\shubh\Documents\Unity_Projects\GDC\VidCodec\Assets\packages\MediaToolkit.1.1.0.1\build\ffmpeg.exe"))
+        using (var engine = new Engine(@"GDC\VidCodec\Assets\packages\MediaToolkit.1.1.0.1\build\ffmpeg.exe"))
         {
             engine.GetMetadata(inputFile);
 

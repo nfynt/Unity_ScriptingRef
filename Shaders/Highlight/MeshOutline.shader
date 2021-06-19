@@ -1,4 +1,4 @@
-﻿Shader "DTT/MeshOutline"
+﻿Shader "Nfynt/MeshOutline"
 {
     Properties
     {

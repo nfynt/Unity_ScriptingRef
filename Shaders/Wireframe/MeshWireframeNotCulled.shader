@@ -1,4 +1,4 @@
-﻿Shader "DTT/MeshWireframeNotCulled"
+﻿Shader "Nfynt/MeshWireframeNotCulled"
 {
 	Properties
 	{

@@ -1,30 +1,22 @@
-using UnityEngine;
-
-namespace Shubham
+namespace nfynt
 {
-    public class Singleton<T> : MonoBehaviour where T:MonoBehaviour
+    public class Singleton < T > where T : new()
     {
-        private static T myInstance;
+        private static T s_Instance;
+
         public static T Instance
         {
-            get { return myInstance; }
-        }
-
-        private void Awake()
-        {
-            if(Instance==null)
+            get
             {
-                myInstance = FindObjectOfType<T>();
-                if(myInstance==null)
+                if ( s_Instance == null )
                 {
-                    myInstance = new GameObject("test").AddComponent<T>();
+                    s_Instance = new T();
                 }
-            }
-            else
-            {
-                Destroy(this);
-            }
 
+                return s_Instance;
+            }
         }
+
+        public static bool Initialized => s_Instance != null;
     }
 }

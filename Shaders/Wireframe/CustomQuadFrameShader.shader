@@ -1,4 +1,4 @@
-﻿Shader "DTT/CustomQuadFrameShader"
+﻿Shader "Nfynt/CustomQuadFrameShader"
 {
     Properties
     {
