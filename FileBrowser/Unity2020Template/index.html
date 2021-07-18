@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en-us">
+   <head>
+      <meta charset="utf-8" />
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <title>{{{ PRODUCT_NAME }}}</title>
+      <link rel="stylesheet" href="css/style.css" />
+      <!-- WebGLFileUploader -->
+      <script src="js/npo.src.js"></script>
+      <link rel="stylesheet" href="css/file_uploader.css">
+      <!--  -->
+   </head>
+   <body class="{{{ SPLASH_SCREEN_STYLE.toLowerCase() }}}">
+   
+      
+    <div class="w3-light-grey">
+         <div id="myBar" class="w3-container w3-green w3-center" style="width:0%">0%</div>
+      </div>
+      
+ <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas"></canvas>
+    </div>
+
+      <script>
+	const buildUrl = "Build";
+      const loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
+      const config = {
+        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+#if MEMORY_FILENAME
+        memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}",
+#endif
+#if SYMBOLS_FILENAME
+        symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+#endif
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "{{{ COMPANY_NAME }}}",
+        productName: "{{{ PRODUCT_NAME }}}",
+        productVersion: "{{{ PRODUCT_VERSION }}}",
+      };
+         
+         const container = document.querySelector("#unity-container");
+      const canvas = document.querySelector("#unity-canvas");
+         const elem = document.querySelector("#myBar");
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        container.className = "unity-mobile";
+        config.devicePixelRatio = 1;
+      }
+#if BACKGROUND_FILENAME
+      canvas.style.background = "url('" + buildUrl + "/{{{ BACKGROUND_FILENAME.replace(/'/g, '%27') }}}') center / cover";
+#endif
+	elem.style.display = "";
+
+         function round(value, precision) {
+         var multiplier = Math.pow(10, precision || 0);
+         return Math.round(value * multiplier) / multiplier;
+         }
+         
+         const script = document.createElement("script");
+         script.src = loaderUrl;
+         script.onload = () => {
+           createUnityInstance(canvas, config, (progress) => {
+         
+             elem.style.width = round(progress * 100, 1) + "%";
+             elem.innerHTML =  round(progress * 100, 1) + "%";
+             
+           }).then((unityInstance) => {
+               
+		elem.style.display = "none";
+           }).catch((message) => {
+             alert(message);
+           });
+         };
+         document.body.appendChild(script);
+      </script>
+      <!-- WebGLFileUploader -->
+      <!-- <div id="file_uploader"></div> -->
+      <!-- <div id="file_uploader_file_list"></div> -->
+      <!--  -->
+   </body>
+</html>

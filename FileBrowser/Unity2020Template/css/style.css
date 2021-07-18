@@ -1,0 +1,115 @@
+body {
+	margin: 0;
+}
+
+canvas {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+
+.webgl-content {
+	position: relative;
+}
+
+.webgl-content * {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.centered {
+	position: relative;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+#unity-container {
+	width: 100%;
+	height: 100%;
+}
+
+#unity-canvas {
+	width: 100%;
+	height: 100%;
+	background: #231F20;
+}
+
+#gameContainer {
+	padding: 0px;
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+}
+
+.loader {
+	background-color: aliceblue;
+}
+
+.loader .progressbar {
+	background-color: steelblue;
+	border: 2px black solid;
+	border-radius: 4px;
+	position: absolute;
+	top: 100px;
+	left: 50%;
+	width: 30%;
+	height: 30px;
+	transform: translate(-50%, -50%);
+}
+
+.loader .fill {
+	background-color: cornflowerblue;
+	border-radius: 4px;
+	height: 100%;
+	text-align: center;
+	margin: auto;
+	font-size: 120%;
+}
+
+.w3-light-grey,
+.w3-hover-light-grey:hover,
+.w3-light-gray,
+.w3-hover-light-gray:hover {
+	color: #000!important;
+	background-color: #f1f1f1!important
+}
+
+.w3-container:after,
+.w3-container:before,
+.w3-panel:after,
+.w3-panel:before,
+.w3-row:after,
+.w3-row:before,
+.w3-row-padding:after,
+.w3-row-padding:before,
+.w3-cell-row:before,
+.w3-cell-row:after,
+.w3-clear:after,
+.w3-clear:before,
+.w3-bar:before,
+.w3-bar:after {
+	content: "";
+	display: table;
+	clear: both
+}
+
+.w3-container,
+.w3-panel {
+	padding: 0.01em 16px
+}
+
+.w3-panel {
+	margin-top: 16px;
+	margin-bottom: 16px
+}
+
+.w3-green,
+.w3-hover-green:hover {
+	color: #fff!important;
+	background-color: #4CAF50!important
+}
+
+.w3-center {
+	text-align: center!important
+}
