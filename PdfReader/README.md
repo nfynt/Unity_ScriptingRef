@@ -5,3 +5,5 @@ Don't expect the package manager to work right out of repo. I had to spend entir
 
 
 [![Watch the video](https://github.com/nfynt/Unity_ScriptingRef/blob/master/PdfReader/vid_snap.PNG?raw=true)](https://youtu.be/nLOfHhjL3MU)
+
+### Read the wiki page to resolve your issues in using the package: https://github.com/nfynt/Unity_ScriptingRef/wiki/PDF-Reader-Guide
