@@ -1,7 +1,9 @@
 {
     "name": "com.nfynt.utils.editor",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:dfc8a144be3acba4d87f40f00b568cab"
+    ],
     "includePlatforms": [
         "Editor"
     ],
