@@ -1,18 +1,27 @@
 {
-    "name": "com.nfynt.utils",
-    "version": "0.1.0",
-    "displayName": "NFYNT Utils",
-    "description": "Some utility scripts for Unity editor and runtime development.",
-    "unity": "2020.3",
-    "unityRelease": "30f1",
-   "keywords": [
-      "nfynt",
-      "unity",
-      "editor",
-      "utils"
-    ],
-    "author": {
-      "name": "Shubham",
+  "name": "com.nfynt.utils",
+  "version": "0.1.1",
+  "displayName": "NFYNT Utils",
+  "description": "Some utility scripts for Unity editor and runtime development.",
+  "documentationUrl": "https://github.com/nfynt/Unity_ScriptingRef",
+  "unity": "2020.3",
+  "unityRelease": "30f1",
+  "keywords": [
+    "nfynt",
+    "unity",
+    "editor",
+    "utils"
+  ],
+  "repository": {
+    "type": "https",
+    "url": "git+https://github.com/nfynt/Unity_ScriptingRef.git"
+  },
+  "license": "MIT",
+  "author": {
+      "name":"Shubham",
       "email": "nfynt.public@gmail.com"
-    }
+  },
+  "bugs": {
+    "url": "https://github.com/nfynt/Unity_ScriptingRef/issues"
   }
+}
