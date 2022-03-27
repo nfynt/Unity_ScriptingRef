@@ -1,0 +1,18 @@
+{
+    "name": "com.nfynt.utils",
+    "version": "0.1.0",
+    "displayName": "NFYNT Utils",
+    "description": "Some utility scripts for Unity editor and runtime development.",
+    "unity": "2020.3",
+    "unityRelease": "30f1",
+   "keywords": [
+      "nfynt",
+      "unity",
+      "editor",
+      "utils"
+    ],
+    "author": {
+      "name": "Shubham",
+      "email": "nfynt.public@gmail.com"
+    }
+  }
