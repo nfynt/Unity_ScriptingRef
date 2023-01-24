@@ -1,6 +1,6 @@
 # Unity_ScriptingRef
 
-A collection of small independent C# scripts those seems to be useful in different requirements while working on any sort of project.
+A collection of public unity packages and small independent C# scripts those seems to be useful in different requirements while working on any sort of project.
 
 ![Cover Image](https://github.com/nfynt/Unity_ScriptingRef/blob/master/intropic2.jpg?raw=true)
 
@@ -19,6 +19,11 @@ Shubham Singh
 * [9](https://github.com/nfynt/Unity_ScriptingRef/blob/master/UVC_Android_Unity_Camera/) - Accessing USB camera over OTG on android devices
 * [10](https://github.com/nfynt/Unity_ScriptingRef/blob/master/Shaders/Heatmaps/) - Heatmap visualization in Unity
 * [11](https://github.com/nfynt/Unity_ScriptingRef/blob/master/ECS/PointCloudRendering/) - Point cloud rendering with interaction in Unity
+
+### Unity Packages
+* [1](https://www.npmjs.com/package/com.nfynt.utils) - Basic utility features commonly required for in-editor development or runtime.
+* [2](https://www.npmjs.com/package/com.nfynt.wvp) - Native video player plugin for Unity WebGL.
+* [3](https://www.npmjs.com/package/com.nfynt.openxr.genericandroidloader) - A generic OpenXR loader for android devices in Unity
 
 ```
 Thank you
