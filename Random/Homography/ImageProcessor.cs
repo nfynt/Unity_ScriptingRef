@@ -16,8 +16,9 @@ public class ImageProcessor : MonoBehaviour
 
     private Texture2D bgCopyTex;
     private Matrix4x4 mHomographyMat;
-    private RenderTexture bgAffineRT;
+    private RenderTexture bgCorrectedImgTargetRT;
     private Material mHomoSampler;
+    private Material mCopySampler;
 
     private Vector2[] mScreenCoord =
     //new Vector2[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) }; //Model-space
@@ -28,20 +29,47 @@ public class ImageProcessor : MonoBehaviour
         mHomoSampler = new Material(Shader.Find("Nfynt/HomographySampler"));
         if (mHomoSampler == null)
             Debug.LogError("Unable to find Nfynt/HomographySampler shader!");
+        mCopySampler = new Material(Shader.Find("Nfynt/CopyTexture"));
+        if (mCopySampler == null)
+            Debug.LogError("Unable to find Nfynt/CopyTexture shader!");
     }
-    
+
     public void Capture()
     {
         var bgTex = bgCam.GetCameraTexture;
-        bgCopyTex = new Texture2D(bgTex.width,bgTex.height, TextureFormat.ARGB32, false);
-        bgAffineRT = new RenderTexture(bgTex.width, bgTex.height, 0, RenderTextureFormat.ARGB32);
+
+        var currRT = RenderTexture.active;
+        bgCopyTex = new Texture2D(bgTex.width, bgTex.height, TextureFormat.ARGB32, false);
+        bgCorrectedImgTargetRT = new RenderTexture(bgTex.width, bgTex.height, 0, RenderTextureFormat.ARGB32);
         //Debug.LogFormat("{0}x{1}",bgCopyTex.width,bgCopyTex.height);
-        Graphics.CopyTexture(bgTex,0,0, bgCopyTex,0,0);
+        //Copy background image
+        if (SystemInfo.copyTextureSupport != UnityEngine.Rendering.CopyTextureSupport.None)
+        {
+            Graphics.CopyTexture(bgTex, 0, 0, bgCopyTex, 0, 0);
+        }
+        else
+        {
+            RenderTexture tmpRT = RenderTexture.GetTemporary(bgTex.width, bgTex.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
+            Graphics.Blit(bgTex, tmpRT);
+            RenderTexture.active = tmpRT;
+
+            bgCopyTex.ReadPixels(new Rect(0, 0, tmpRT.width, tmpRT.height), 0, 0);
+            bgCopyTex.Apply();
+            RenderTexture.ReleaseTemporary(tmpRT);
+        }
+
         bgMat.mainTexture = bgCopyTex;
         bgCopyImg.texture = bgCopyTex;
 
         EstimateHomography();
-        bgCorrectedImg.texture = bgAffineRT;
+
+        Debug.Log("Homography:\n" + mHomographyMat.ToString());
+
+        GL.Clear(true, true, Color.magenta);
+        mHomoSampler.SetMatrix("_Homography", mHomographyMat);
+        Graphics.Blit(bgCopyTex, bgCorrectedImgTargetRT, mHomoSampler);
+        RenderTexture.active = currRT;
+        bgCorrectedImg.texture = bgCorrectedImgTargetRT;
     }
 
     void EstimateHomography()
@@ -70,16 +98,18 @@ public class ImageProcessor : MonoBehaviour
             new Vector2[] { previewBound[0], previewBound[1], previewBound[2], previewBound[3] },
             mScreenCoord
             ,true);
-
-        Debug.Log("Homography:\n"+mHomographyMat.ToString());
-        var currRT = RenderTexture.active;
-        RenderTexture.active = bgAffineRT;
-        GL.Clear(true, true, Color.magenta);
-        mHomoSampler.SetMatrix("_Homography", mHomographyMat);
-        Graphics.Blit(bgCopyTex,bgAffineRT,mHomoSampler);
-        RenderTexture.active = currRT;
     }
-    
+
+    Texture2D toTexture2D(RenderTexture rTex)
+    {
+        Texture2D tex = new Texture2D(rTex.width, rTex.height, TextureFormat.ARGB32, false);
+        // ReadPixels looks at the active RenderTexture.
+        RenderTexture.active = rTex;
+        tex.ReadPixels(new Rect(0, 0, rTex.width, rTex.height), 0, 0);
+        tex.Apply();
+        return tex;
+    }
+
     void AddDot(ref Texture2D tex, Vector2Int pos, int size, Color col)
     {
         int sh = size / 2;
