@@ -19,6 +19,7 @@ Shubham Singh
 * [9](https://github.com/nfynt/Unity_ScriptingRef/blob/master/UVC_Android_Unity_Camera/) - Accessing USB camera over OTG on android devices
 * [10](https://github.com/nfynt/Unity_ScriptingRef/blob/master/Shaders/Heatmaps/) - Heatmap visualization in Unity
 * [11](https://github.com/nfynt/Unity_ScriptingRef/blob/master/ECS/PointCloudRendering/) - Point cloud rendering with interaction in Unity
+* [12](https://github.com/nfynt/Unity_ScriptingRef/blob/master/Random/TTS/) - Android text-to-speech (TTS) bridge for Unity C#
 
 ### Unity Packages
 * [1](https://www.npmjs.com/package/com.nfynt.utils) - Basic utility features commonly required for in-editor development or runtime.
