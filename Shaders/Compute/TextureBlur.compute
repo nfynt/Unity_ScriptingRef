@@ -1,0 +1,43 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+int KernelSize = 1;
+Texture2D<float4> InputTex;
+RWTexture2D<float4> Result;
+
+SamplerState samplerState;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    //Red flush shader
+    //Result[id.xy] = float4(1, 0, 0, 1);
+    
+    float4 sum = float4(0, 0, 0, 0);
+    int2 size;
+    InputTex.GetDimensions(size.x, size.y);
+    
+    for (int x = -KernelSize; x <= KernelSize; ++x)
+    {
+        for (int y = -KernelSize; y <= KernelSize; ++y)
+        {
+            int2 coord = int2(id.xy) + int2(x, y);
+            coord = clamp(coord.xy, int2(0, 0), size.xy - int2(1, 1));
+            sum += InputTex.Load(int3(coord, 0));
+        }
+    }
+
+    //(2n+1)^2
+    Result[id.xy] = sum / (4 * KernelSize * KernelSize + 4 * KernelSize + 1);
+}
+
+
+
+/*
+ __  _ _____   ____  _ _____  
+|  \| | __\ `v' /  \| |_   _| 
+| | ' | _| `. .'| | ' | | |   
+|_|\__|_|   !_! |_|\__| |_|
+ 
+
+*/
